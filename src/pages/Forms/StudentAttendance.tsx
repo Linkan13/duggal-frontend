@@ -15,10 +15,10 @@ const studentData: Student = {
   attendance: {
     January: Array(30)
       .fill("P")
-      .map((v, i) => (i % 7 === 0 ? "A" : "P")),
+      .map((_, i) => (i % 7 === 0 ? "A" : "P")),
     February: Array(28)
       .fill("P")
-      .map((v, i) => (i % 6 === 0 ? "A" : "P")),
+      .map((_, i) => (i % 6 === 0 ? "A" : "P")),
   },
 };
 

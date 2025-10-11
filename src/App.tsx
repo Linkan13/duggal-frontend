@@ -27,6 +27,7 @@ import AttendanceDashboard from "./pages/Dashboard/AttendanceDashboard";
 import PaymentDashboard from "./pages/Dashboard/PaymentDashboard";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { RoomList, AddRoomForm, RoomDetails, EditRoomForm } from "./pages/Room";
+import { RolesList, AddRolesForm, EditRolesForm } from "./pages/Roles";
 import {
   BatchList,
   AddBatchForm,
@@ -96,6 +97,11 @@ export default function App() {
                 <Route path="create" element={<AddRoomForm />} />
                 <Route path="view/:id" element={<RoomDetails />} />
                 <Route path="edit/:id" element={<EditRoomForm />} />
+              </Route>
+              <Route path="/roles">
+                <Route index element={<RolesList />} />
+                <Route path="create" element={<AddRolesForm />} />
+                <Route path="edit/:id" element={<EditRolesForm />} />
               </Route>
               <Route path="/batches">
                 <Route index element={<BatchList />} />

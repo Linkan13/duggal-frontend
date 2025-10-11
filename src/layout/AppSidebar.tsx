@@ -30,9 +30,6 @@ const navItems: NavItem[] = [
       { name: "Payments", path: "/payment-dashboard" },
     ],
   },
-  { icon: <CalenderIcon />, name: "Calendar", path: "/calendar" },
-  { icon: <UserCircleIcon />, name: "User Profile", path: "/profile" },
-  { icon: <UserCircleIcon />, name: "Settings", path: "/profile" },
   {
     name: "Students",
     icon: <ListIcon />,
@@ -87,6 +84,13 @@ const navItems: NavItem[] = [
     subItems: [
       { name: "Courses List", path: "/course" },
       { name: "Create Course", path: "/course/create" },
+    ],
+  },
+  {
+    name: "Settings",
+    icon: <GridIcon />, // changed from BoxCubeIcon
+    subItems: [
+      { name: "Roles", path: "/roles" },
     ],
   },
 ];

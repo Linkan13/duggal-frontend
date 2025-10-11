@@ -1,18 +1,13 @@
 import { Navigate, Outlet } from "react-router-dom";
 
-interface ProtectedRouteProps {
-  children?: React.ReactNode;
-}
-
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const isLoggedIn = Boolean(localStorage.getItem("token")); // or your auth check
+const ProtectedRoute = () => {
+  const isLoggedIn = Boolean(localStorage.getItem("token"));
 
   if (!isLoggedIn) {
     return <Navigate to="/signin" replace />;
   }
 
-  // If children are passed, render them; otherwise render nested routes
-  return children ? <>{children}</> : <Outlet />;
+  return <Outlet />;
 };
 
 export default ProtectedRoute;

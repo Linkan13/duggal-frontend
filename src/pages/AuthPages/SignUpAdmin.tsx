@@ -1,6 +1,6 @@
 import PageMeta from "../../components/common/PageMeta";
 import AuthLayout from "./AuthPageLayout";
-import SignUpForm from "../../components/auth/SignUpForm";
+import SignUpFormAdmin from "../../components/auth/SignUpFormAdmin";
 
 export default function SignUp() {
   return (
@@ -10,7 +10,7 @@ export default function SignUp() {
         description="Create your account to access Duggal Overseas Management System for Visa and IELTS center operations. Manage applications, track progress, and streamline your workflow efficiently."
       />
       <AuthLayout>
-        <SignUpForm />
+        <SignUpFormAdmin />
       </AuthLayout>
     </>
   );

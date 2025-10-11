@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginRequest, TLogin } from "@/client/endpoints/auth";
-import { showMessage, MESSAGE_TYPE } from "@/utils/notify";
 import { getAlertMessage, setAlertMessage } from "@/utils/alertService";
 import { Mail, Eye, EyeOff } from "tabler-icons-react";
+import { toast } from "react-toastify";
 
 export default function SignInForm() {
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ export default function SignInForm() {
   const [alertType, setAlertType] = useState<"success" | "error">("success");
 
   useEffect(() => {
-    const msg = getAlertMessage(); // reads and clears the alert
+    const msg = getAlertMessage();
     if (msg) {
       setAlertMessageLocal(msg);
       setAlertType("success");
@@ -34,8 +34,15 @@ export default function SignInForm() {
         localStorage.setItem("token", response.data.accessToken);
       }
 
-      // show toast/alert
-      showMessage("Login successful!", MESSAGE_TYPE.SUCCESS);
+      let userName = "User";
+      if (response.data.user) {
+        userName = response.data.user.firstName || response.data.user.username;
+        localStorage.setItem("userName", userName);
+      }
+
+      // ✅ Show toast
+      toast.success(`Welcome, ${userName}!`);
+
       setAlertMessage("Login successful!");
       navigate("/dashboard");
     } catch (err: unknown) {
@@ -48,7 +55,7 @@ export default function SignInForm() {
       setAlertMessageLocal(errorMsg || "Login failed");
       setAlertType("error");
 
-      showMessage(errorMsg || "Login failed", MESSAGE_TYPE.ERROR);
+      toast.error(errorMsg || "Login failed");
     } finally {
       setLoading(false);
     }
@@ -58,7 +65,7 @@ export default function SignInForm() {
     <form onSubmit={handleSubmit} className="vh-100">
       <div className="vh-100 d-flex flex-column justify-content-between p-4 pb-0">
         <div className="mx-auto mb-5 text-center">
-        <img
+          <img
             src="/images/logo-sidebar.png"
             alt="Logo"
             className="img-fluid mx-auto d-block"
@@ -160,7 +167,7 @@ export default function SignInForm() {
           <div className="text-center">
             <h6 className="fw-normal text-dark mb-0">
               Don’t have an account?
-              <Link to="/register" className="hover-a">
+              <Link to="/signup" className="hover-a">
                 &nbsp;Create Account
               </Link>
             </h6>

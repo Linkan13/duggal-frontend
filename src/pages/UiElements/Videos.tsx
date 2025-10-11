@@ -10,7 +10,7 @@ export default function Videos() {
   return (
     <>
       <PageMeta
-        title="React.js Videos Tabs | TailAdmin - React.js Admin Dashboard Template"
+        title="Duggal Overseas"
         description="This is React.js Videos page for TailAdmin - React.js  CSS Admin Dashboard Template"
       />
       <PageBreadcrumb pageTitle="Videos" />

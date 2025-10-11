@@ -1025,7 +1025,7 @@ export default function Home() {
       </div>
 
       <PageMeta
-        title="React.js Ecommerce Dashboard | TailAdmin - React.js Admin Dashboard Template"
+        title="Duggal Overseas"
         description="This is React.js Ecommerce Dashboard page for TailAdmin - React.js  CSS Admin Dashboard Template"
       />
       <div className="grid grid-cols-12 gap-4 md:gap-6">

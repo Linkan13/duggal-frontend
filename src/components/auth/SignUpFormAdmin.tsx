@@ -2,25 +2,18 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { registerRequest, TRegister } from "@/client/endpoints/auth";
 import { showMessage, MESSAGE_TYPE } from "@/utils/notify";
-import { Mail, Eye, EyeOff, User } from "tabler-icons-react";
+import { Mail, Eye, EyeOff, User, Lock } from "tabler-icons-react";
 
-export default function SignUpForm() {
+export default function SignUpFormAdmin() {
   const navigate = useNavigate();
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Form state for API fields
-  const [form, setForm] = useState<TRegister>({
-    firstName: "",
-    lastName: "",
-    username: "",
-    email: "",
-    password: "",
-  });
-
-  // Separate state for confirm password (client-side only)
+  // Empty form — no prefilled values
+  const [form, setForm] = useState<Partial<TRegister>>({});
+  const [adminKey, setAdminKey] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
   const [loading, setLoading] = useState(false);
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
   const [alertType, setAlertType] = useState<"success" | "error">("success");
@@ -29,17 +22,39 @@ export default function SignUpForm() {
     e.preventDefault();
     setAlertMessage(null);
 
+    if (
+      !form.firstName ||
+      !form.lastName ||
+      !form.username ||
+      !form.email ||
+      !form.password
+    ) {
+      setAlertMessage("All fields are required");
+      setAlertType("error");
+      return;
+    }
+
+    // ✅ Password match
     if (form.password !== confirmPassword) {
       setAlertMessage("Passwords do not match");
       setAlertType("error");
       return;
     }
 
+    // ✅ Local admin key validation only
+    const ADMIN_SECRET = import.meta.env.VITE_ADMIN_SECRET || "Duggal@2025";
+    if (adminKey !== ADMIN_SECRET) {
+      setAlertMessage("Invalid Admin Access Key");
+      setAlertType("error");
+      return;
+    }
+
     setLoading(true);
     try {
-      await registerRequest(form); // only send API-required fields
-      showMessage("Registration successful!", MESSAGE_TYPE.SUCCESS);
-      setAlertMessage("Registration successful! Redirecting to login...");
+      // ✅ Send only clean payload
+      await registerRequest(form as TRegister);
+      showMessage("Admin created successfully!", MESSAGE_TYPE.SUCCESS);
+      setAlertMessage("Admin created successfully! Redirecting...");
       setAlertType("success");
 
       setTimeout(() => navigate("/signin"), 1500);
@@ -49,7 +64,6 @@ export default function SignUpForm() {
           ? (err as { response?: { data?: { message?: string } } }).response
               ?.data?.message
           : "Registration failed";
-
       setAlertMessage(errorMsg ?? "Registration failed");
       setAlertType("error");
       showMessage(errorMsg ?? "Registration failed", MESSAGE_TYPE.ERROR);
@@ -73,23 +87,21 @@ export default function SignUpForm() {
         <div>
           {/* Title */}
           <div className="text-center mb-3">
-            <h2 className="mb-2">Sign Up</h2>
-            <p className="mb-0">Create your account</p>
+            <h2 className="mb-2">Admin Registration</h2>
+            <p className="mb-0">Enter details to create admin account</p>
           </div>
 
-          {/* First Name */}
-          <></>
+          {/* First & Last Name */}
           <div className="row mb-3">
-            {/* First Name */}
             <div className="col-md-6">
               <label className="form-label">First Name</label>
               <div className="input-group">
                 <input
                   type="text"
                   placeholder="First Name"
-                  value={form.firstName}
+                  value={form.firstName ?? ""}
                   onChange={(e) =>
-                    setForm({ ...form, firstName: e.target.value })
+                    setForm({ ...form, firstName: e.target.value.trim() })
                   }
                   required
                   className="form-control"
@@ -100,16 +112,15 @@ export default function SignUpForm() {
               </div>
             </div>
 
-            {/* Last Name */}
             <div className="col-md-6">
               <label className="form-label">Last Name</label>
               <div className="input-group">
                 <input
                   type="text"
                   placeholder="Last Name"
-                  value={form.lastName}
+                  value={form.lastName ?? ""}
                   onChange={(e) =>
-                    setForm({ ...form, lastName: e.target.value })
+                    setForm({ ...form, lastName: e.target.value.trim() })
                   }
                   required
                   className="form-control"
@@ -128,8 +139,10 @@ export default function SignUpForm() {
               <input
                 type="text"
                 placeholder="Username"
-                value={form.username}
-                onChange={(e) => setForm({ ...form, username: e.target.value })}
+                value={form.username ?? ""}
+                onChange={(e) =>
+                  setForm({ ...form, username: e.target.value.trim() })
+                }
                 required
                 className="form-control"
               />
@@ -146,8 +159,10 @@ export default function SignUpForm() {
               <input
                 type="email"
                 placeholder="info@gmail.com"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                value={form.email ?? ""}
+                onChange={(e) =>
+                  setForm({ ...form, email: e.target.value.trim() })
+                }
                 required
                 className="form-control"
               />
@@ -164,7 +179,7 @@ export default function SignUpForm() {
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
-                value={form.password}
+                value={form.password ?? ""}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
                 required
                 className="pass-input form-control"
@@ -187,7 +202,7 @@ export default function SignUpForm() {
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder="Confirm your password"
-                value={confirmPassword} // use separate state
+                value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 className="pass-input form-control"
@@ -203,6 +218,24 @@ export default function SignUpForm() {
                     <EyeOff size={20} />
                   )}
                 </span>
+              </span>
+            </div>
+          </div>
+
+          {/* Admin Access Key (local only) */}
+          <div className="mb-3">
+            <label className="form-label">Admin Access Key</label>
+            <div className="input-group">
+              <input
+                type="password"
+                placeholder="Enter admin key"
+                value={adminKey}
+                onChange={(e) => setAdminKey(e.target.value)}
+                required
+                className="form-control"
+              />
+              <span className="input-group-text border-start-0">
+                <Lock size={20} />
               </span>
             </div>
           </div>
@@ -228,7 +261,7 @@ export default function SignUpForm() {
               className="btn btn-primary w-100"
               disabled={loading}
             >
-              {loading ? "Signing up..." : "Sign Up"}
+              {loading ? "Creating Admin..." : "Create Admin Account"}
             </button>
           </div>
 

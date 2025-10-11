@@ -221,7 +221,20 @@ export default function StudentList() {
       { accessorKey: "lastName", header: "Last Name" },
       { accessorKey: "email", header: "Email" },
       { accessorKey: "phone", header: "Phone" },
-      { accessorKey: "joinedDate", header: "Joined on" },
+      {
+        accessorKey: "joinedDate",
+        header: "Joined on",
+        cell: ({ getValue }) => {
+          const date = getValue() as string | Date;
+          if (!date) return "-";
+          const d = new Date(date);
+          return d.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          }); // e.g., 11 Oct 2025
+        },
+      },
       {
         id: "actions",
         header: "Actions",
@@ -260,13 +273,7 @@ export default function StudentList() {
 
   // ----- Download CSV -----
   const downloadCSV = useCallback(() => {
-    const headers = [
-      "First Name",
-      "Last Name",
-      "Email",
-      "Phone",
-      "Joined on",
-    ];
+    const headers = ["First Name", "Last Name", "Email", "Phone", "Joined on"];
     const csvRows = [
       headers.join(","),
       ...data.map((s) =>
